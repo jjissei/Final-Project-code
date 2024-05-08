@@ -1,0 +1,251 @@
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+// ... (other imports if needed)
+
+public class CFCContentAnalysisApp extends Application {
+
+    private ListView<String> resultsView = new ListView<>();
+    private ProgressBar progressBar = new ProgressBar(0);
+    private TextArea detailedResultsArea = new TextArea();
+    private TextArea cfcInfoArea = new TextArea();
+    private Queue<String> analysisHistory = new LinkedList<>();
+
+    // ... (rest of the existing fields, if any)
+
+    // ... (rest of the existing methods, if any)
+
+    @Override
+    public void start(Stage primaryStage) {
+        VBox root = new VBox();
+
+        MenuBar menuBar = new MenuBar();
+
+        // File menu for saving results
+        Menu fileMenu = new Menu("File");
+        MenuItem saveResultsItem = new MenuItem("Save Results");
+        saveResultsItem.setOnAction(event -> saveResults());
+        fileMenu.getItems().add(saveResultsItem);
+
+        // Help menu for showing CFC information
+        Menu helpMenu = new Menu("Help");
+        MenuItem cfcTypesItem = new MenuItem("CFC Types");
+        cfcTypesItem.setOnAction(event -> showCfcInfo());
+        helpMenu.getItems().add(cfcTypesItem);
+
+        menuBar.getMenus().addAll(fileMenu, helpMenu);
+
+        Button btnAnalyzeImage = new Button("Analyze Image");
+        btnAnalyzeImage.setOnAction(event -> {
+            File imageFile = showImageFileChooser(primaryStage);
+            if (imageFile != null) {
+                byte[] imageData = readImageData(imageFile);
+                if (imageData != null) {
+                    startAnalysis(imageData);
+                } else {
+                    showAlert("Error", "Failed to read image data.", AlertType.ERROR);
+                }
+            } else {
+                showAlert("Error", "No image file selected.", AlertType.ERROR);
+            }
+        });
+
+        progressBar.setVisible(false);
+        detailedResultsArea.setEditable(false);
+        cfcInfoArea.setEditable(false);
+
+        // Add components to the root layout
+        root.getChildren().addAll(menuBar, btnAnalyzeImage, progressBar, resultsView, detailedResultsArea, cfcInfoArea);
+
+        Scene scene = new Scene(root, 600, 400);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("CFC Content Analysis App");
+        primaryStage.show();
+    }
+
+    // ... (rest of the existing methods such as saveResults, showAlert, startAnalysis, displayResults...)
+
+    // Method to display information about different types of CFCs
+    private void showCfcInfo() {
+        String cfcInformation = "CFC-11: Used in foam production and as a refrigerant. Contributes to ozone depletion.\n" +
+                                "CFC-12: Commonly used in air conditioning systems. Harmful to the ozone layer.\n" +
+                                "CFC-113: Used in electronic cleaning and as a solvent. High ozone-depleting potential.\n" +
+                                "CFC-114:  cfcInfoArea.setText(cfcInformation);
+}
+
+// ... (other methods such as readImageData, analyzeImage, getCFCContentInfo...)
+
+// Method to save the analysis results to a file
+private void saveResults() {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Save Analysis Results");
+    fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Text Files", "*.txt"));
+    File file = fileChooser.showSaveDialog(primaryStage);
+    if (file != null) {
+        try (PrintWriter writer = new PrintWriter(file)) {
+            for (String result : analysisHistory) {
+                writer.println(result);
+            }
+            showAlert("Success", "Results saved successfully.", AlertType.INFORMATION);
+        } catch (Exception e) {
+            showAlert("Error", "Failed to save results to file.", AlertType.ERROR);
+        }
+    }
+}
+
+// Method to show alerts
+private void showAlert(String title, String message, AlertType type) {
+    Alert alert = new Alert(type);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    alert.showAndWait();
+}
+
+// Method to start the analysis process
+private void startAnalysis(byte[] imageData) {
+    // ... existing startAnalysis method logic ...
+}
+
+// Method to display analysis results
+private void displayResults(List<DetectedObject> objects) {
+    // ... existing displayResults method logic ...
+}
+
+// ... (additional methods for image analysis and UI updates)
+
+// Dummy classes to represent detected objects and CFC content data
+class DetectedObject {
+    String name;
+    double cfcContent;
+
+    DetectedObject(String name, double cfcContent) {
+        this.name = name;
+        this.cfcContent = cfcContent;
+    }
+
+    // Getters for DetectedObject fields
+    public String getName() {
+        return name;
+    }
+
+    public double getCfcContent() {
+        return cfcContent;
+    }
+}
+
+class CFCContent {
+    String objectName;
+    String disposalAdvice;
+
+    CFCContent(String objectName, String disposalAdvice) {
+        this.objectName = objectName;
+        this.disposalAdvice = disposalAdvice;
+    }
+
+    // Getters for CFCContent fields
+    public String getObjectName() {
+        return objectName;
+    }
+
+    public String getDisposalAdvice() {
+        return disposalAdvice;
+    }
+}
+
+// Main method to launch the application
+public static void main(String[] args) {
+    launch(args);
+}
+{
+// Add an ImageView to the UI
+private ImageView imageView = new ImageView();
+
+// Inside the startAnalysis method, after selecting the image file
+imageView.setImage(new Image(new FileInputStream(imageFile)));
+imageView.setFitWidth(100); // Set the desired preview size
+imageView.setPreserveRatio(true);
+}
+private void exportResultsToCSV(File file) {
+    try (PrintWriter writer = new PrintWriter(file)) {
+        writer.println("ObjectName,DisposalAdvice"); // CSV header
+        for (String result : analysisHistory) {
+            String csvResult = result.replace(": ", ","); // Simple conversion to CSV format
+            writer.println(csvResult);
+        }
+        showAlert("Success", "Results exported to CSV successfully.", AlertType.INFORMATION);
+    } catch (Exception e) {
+        showAlert("Error", "Failed to export results to CSV.", AlertType.ERROR);
+    }
+}
+Deque<Runnable> undoStack = new ArrayDeque<>();
+Deque<Runnable> redoStack = new ArrayDeque<>();
+
+public void performAction(Runnable action, Runnable undoAction) {
+    action.run();
+    undoStack.push(undoAction);
+    redoStack.clear();
+}
+
+public void undo() {
+    if (!undoStack.isEmpty()) {
+        Runnable undoAction = undoStack.pop();
+        undoAction.run();
+        redoStack.push(undoAction);
+    }
+}
+
+public void redo() {
+    if (!redoStack.isEmpty()) {
+        Runnable redoAction = redoStack.pop();
+        redoAction.run();
+        undoStack.push(redoAction);
+    }
+}
+private ImageView imageView = new ImageView();
+private Rectangle2D viewport;
+
+public void setupImageCropping() {
+    RubberBandSelection rubberBandSelection = new RubberBandSelection(imageView);
+
+    Button cropButton = new Button("Crop");
+    cropButton.setOnAction(event -> {
+        Bounds selectionBounds = rubberBandSelection.getBounds();
+        viewport = new Rectangle2D(
+                selectionBounds.getMinX(), selectionBounds.getMinY(),
+                selectionBounds.getWidth(), selectionBounds.getHeight()
+        );
+        imageView.setViewport(viewport);
+    });
+
+    // Add cropButton to your UI
+}
+
+// RubberBandSelection is a helper class you would need to create that handles mouse events to draw a rectangle over the ImageView for user selection.
+private void annotateImageWithText(String text, double x, double y) {
+    Text textNode = new Text(x, y, text);
+    // You might want to add style, font, or color settings here
+
+    // Assuming 'pane' is the container for the ImageView
+    pane.getChildren().add(textNode);
+}
